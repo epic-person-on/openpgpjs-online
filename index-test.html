@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenPGP.js Encrypt/Decrypt Example</title>
+    <script src="https://unpkg.com/openpgp@6.0.1/dist/openpgp.min.js"></script>
+</head>
+<body>
+    <h1>Encrypt and Decrypt Messages with OpenPGP.js</h1>
+    
+    <div>
+        <h2>Generate Key Pair</h2>
+        <label for="name">Name:</label>
+        <input type="text" id="name" placeholder="Enter your name"><br>
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter your email"><br>
+        <label for="passphrase">Passphrase:</label>
+        <input type="password" id="passphrase" placeholder="Enter a passphrase"><br>
+        <button onclick="generateKeyPair()">Generate Keys</button>
+        <p>Public Key:</p>
+        <textarea id="generatedPublicKey" rows="4" cols="50" readonly></textarea>
+        <p>Private Key:</p>
+        <textarea id="generatedPrivateKey" rows="4" cols="50" readonly></textarea>
+    </div>
+    
+    <div>
+        <h2>Encrypt a Message</h2>
+        <textarea id="message" placeholder="Enter message to encrypt" rows="4" cols="50"></textarea><br>
+        <textarea id="publicKey" placeholder="Enter recipient's public key" rows="4" cols="50"></textarea><br>
+        <button onclick="encryptMessage()">Encrypt</button>
+        <p>Encrypted Message:</p>
+        <textarea id="encryptedMessage" rows="4" cols="50" readonly></textarea>
+    </div>
+    
+    <div>
+        <h2>Decrypt a Message</h2>
+        <textarea id="encryptedMessageToDecrypt" placeholder="Enter encrypted message" rows="4" cols="50"></textarea><br>
+        <textarea id="privateKey" placeholder="Enter your private key" rows="4" cols="50"></textarea><br>
+        <label for="decryptPassphrase">Passphrase:</label>
+        <input type="password" id="decryptPassphrase" placeholder="Enter your passphrase"><br>
+        <button onclick="decryptMessage()">Decrypt</button>
+        <p>Decrypted Message:</p>
+        <textarea id="decryptedMessage" rows="4" cols="50" readonly></textarea>
+    </div>
+
+    <script>
+        const debugMode = true; // Set this to true to enable debug mode
+
+        async function generateKeyPair() {
+            try {
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const passphrase = document.getElementById('passphrase').value;
+
+                const { privateKey, publicKey } = await openpgp.generateKey({
+                    type: 'ecc', // Type of the key: ECC (Elliptic Curve)
+                    curve: 'curve25519', // Curve used
+                    userIDs: [{ name: name, email: email }],
+                    passphrase: passphrase
+                });
+
+                document.getElementById('generatedPublicKey').value = publicKey;
+                document.getElementById('generatedPrivateKey').value = privateKey;
+            } catch (error) {
+                if (debugMode) {
+                    alert('Error generating key pair: ' + error.message);
+                }
+                console.error('Error generating key pair:', error);
+            }
+        }
+
+        async function encryptMessage() {
+            try {
+                const message = document.getElementById('message').value;
+                const publicKeyArmored = document.getElementById('publicKey').value;
+
+                const publicKey = await openpgp.readKey({ armoredKey: publicKeyArmored });
+
+                const encrypted = await openpgp.encrypt({
+                    message: await openpgp.createMessage({ text: message }),
+                    encryptionKeys: publicKey
+                });
+
+                document.getElementById('encryptedMessage').value = encrypted;
+            } catch (error) {
+                if (debugMode) {
+                    alert('Error encrypting message: ' + error.message);
+                }
+                console.error('Error encrypting message:', error);
+            }
+        }
+
+        async function decryptMessage() {
+            try {
+                const encryptedMessage = document.getElementById('encryptedMessageToDecrypt').value;
+                const privateKeyArmored = document.getElementById('privateKey').value;
+                const passphrase = document.getElementById('decryptPassphrase').value;
+
+                const privateKey = await openpgp.decryptKey({
+                    privateKey: await openpgp.readPrivateKey({ armoredKey: privateKeyArmored }),
+                    passphrase
+                });
+
+                const message = await openpgp.readMessage({ armoredMessage: encryptedMessage });
+
+                const { data: decrypted } = await openpgp.decrypt({
+                    message,
+                    decryptionKeys: privateKey
+                });
+
+                document.getElementById('decryptedMessage').value = decrypted;
+            } catch (error) {
+                if (debugMode) {
+                    alert('Error decrypting message: ' + error.message);
+                }
+                console.error('Error decrypting message:', error);
+            }
+        }
+    </script>
+</body>
+</html>

@@ -7,17 +7,24 @@
     <script src="https://unpkg.com/openpgp@6.0.1/dist/openpgp.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/nice-forms.css@0.1.7/dist/nice-forms.css">
     <style>
+        /* Resetting margin and padding to ensure consistent layout */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f9;
             color: #333;
-            margin: 0;
-            padding: 0;
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
+            align-items: flex-start; /* Start aligned from the top */
             flex-direction: column;
+            min-height: 100vh; /* Allow scrolling when content exceeds viewport height */
+            padding: 20px;
+            overflow-x: hidden; /* Prevent horizontal scrolling */
         }
 
         h1 {
@@ -41,6 +48,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         label {
@@ -50,7 +59,7 @@
 
         input[type="text"], input[type="email"], input[type="password"], textarea {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 8px 0 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
@@ -83,9 +92,38 @@
             color: #555;
         }
 
+        /* Ensuring responsiveness and proper spacing */
         .container {
-            width: 90%;
+            width: 100%;
             max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-bottom: 50px; /* Add bottom padding to prevent content cut-off on small screens */
+        }
+
+        /* Ensuring that we can scroll */
+        html, body {
+            height: 100%;
+            overflow-y: auto; /* Allow vertical scrolling */
+        }
+
+        /* Small screen adjustments */
+        @media screen and (max-width: 600px) {
+            h1 {
+                font-size: 2em; /* Smaller font for small screens */
+            }
+
+            .nice-form-group {
+                padding: 15px;
+            }
+
+            button {
+                width: 100%; /* Full-width button on small screens */
+            }
+
+            textarea {
+                font-size: 0.9em; /* Smaller font in textareas for mobile devices */
+            }
         }
     </style>
 </head>

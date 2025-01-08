@@ -1,4 +1,4 @@
-import * as openpgp from './openpgp.min.js';
+import * as openpgp from 'https://unpkg.com/openpgp@6.0.1/dist/openpgp.min.js';
 
 const debugMode = true; // Set this to true to enable debug mode
 

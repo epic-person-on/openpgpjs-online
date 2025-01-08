@@ -2,7 +2,7 @@ import * as openpgp from 'https://unpkg.com/openpgp@6.0.1/dist/openpgp.min.js';
 
 const debugMode = true; // Set this to true to enable debug mode
 
-async function generateKeyPair() {
+window.generateKeyPair = async function() {
     try {
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
@@ -25,7 +25,7 @@ async function generateKeyPair() {
     }
 }
 
-async function encryptMessage() {
+window.encryptMessage = async function() {
     try {
         const message = document.getElementById('message').value;
         const publicKeyArmored = document.getElementById('publicKey').value;
@@ -46,7 +46,7 @@ async function encryptMessage() {
     }
 }
 
-async function decryptMessage() {
+window.decryptMessage = async function() {
     try {
         const encryptedMessage = document.getElementById('encryptedMessageToDecrypt').value;
         const privateKeyArmored = document.getElementById('privateKey').value;

@@ -1,3 +1,5 @@
+import * as openpgp from './openpgp.min.js';
+
 const debugMode = true; // Set this to true to enable debug mode
 
 async function generateKeyPair() {

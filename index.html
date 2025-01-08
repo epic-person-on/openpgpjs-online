@@ -6,47 +6,131 @@
     <title>OpenPGP.js Encrypt/Decrypt Example</title>
     <script src="https://unpkg.com/openpgp@6.0.1/dist/openpgp.min.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/nice-forms.css@0.1.7/dist/nice-forms.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: #3e8e41;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+        }
+
+        .nice-form-group {
+            background-color: #fff;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 1.1em;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        textarea {
+            font-size: 1em;
+            font-family: monospace;
+        }
+
+        p {
+            font-size: 1em;
+            color: #555;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Encrypt and Decrypt Messages with OpenPGP.js</h1>
-    
-    <div class="nice-form-group">
-        <h2>Generate Key Pair</h2>
-        <label for="name">Name:</label>
-        <input type="text" id="name" placeholder="Enter your name"><br>
-        <label for="email">Email:</label>
-        <input type="email" id="email" placeholder="Enter your email"><br>
-        <label for="passphrase">Passphrase:</label>
-        <input type="password" id="passphrase" placeholder="Enter a passphrase"><br>
-        <button onclick="generateKeyPair()">Generate Keys</button>
-        <p>Public Key:</p>
-        <textarea id="generatedPublicKey" rows="4" cols="50" readonly></textarea>
-        <p>Private Key:</p>
-        <textarea id="generatedPrivateKey" rows="4" cols="50" readonly></textarea>
-    </div>
-    
-    <div class="nice-form-group">
-        <h2>Encrypt a Message</h2>
-        <textarea id="message" placeholder="Enter message to encrypt" rows="4" cols="50"></textarea><br>
-        <textarea id="publicKey" placeholder="Enter recipient's public key" rows="4" cols="50"></textarea><br>
-        <button onclick="encryptMessage()">Encrypt</button>
-        <p>Encrypted Message:</p>
-        <textarea id="encryptedMessage" rows="4" cols="50" readonly></textarea>
-    </div>
-    
-    <div class="nice-form-group">
-        <h2>Decrypt a Message</h2>
-        <textarea id="encryptedMessageToDecrypt" placeholder="Enter encrypted message" rows="4" cols="50"></textarea><br>
-        <textarea id="privateKey" placeholder="Enter your private key" rows="4" cols="50"></textarea><br>
-        <label for="decryptPassphrase">Passphrase:</label>
-        <input type="password" id="decryptPassphrase" placeholder="Enter your passphrase"><br>
-        <button onclick="decryptMessage()">Decrypt</button>
-        <p>Decrypted Message:</p>
-        <textarea id="decryptedMessage" rows="4" cols="50" readonly></textarea>
+    <div class="container">
+        <h1>Encrypt and Decrypt Messages with OpenPGP.js</h1>
+
+        <div class="nice-form-group">
+            <h2>Generate Key Pair</h2>
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter your name">
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email">
+            <label for="passphrase">Passphrase:</label>
+            <input type="password" id="passphrase" placeholder="Enter a passphrase">
+            <button onclick="generateKeyPair()">Generate Keys</button>
+            <p>Public Key:</p>
+            <textarea id="generatedPublicKey" rows="4" readonly></textarea>
+            <p>Private Key:</p>
+            <textarea id="generatedPrivateKey" rows="4" readonly></textarea>
+        </div>
+
+        <div class="nice-form-group">
+            <h2>Encrypt a Message</h2>
+            <textarea id="message" placeholder="Enter message to encrypt" rows="4"></textarea>
+            <textarea id="publicKey" placeholder="Enter recipient's public key" rows="4"></textarea>
+            <button onclick="encryptMessage()">Encrypt</button>
+            <p>Encrypted Message:</p>
+            <textarea id="encryptedMessage" rows="4" readonly></textarea>
+        </div>
+
+        <div class="nice-form-group">
+            <h2>Decrypt a Message</h2>
+            <textarea id="encryptedMessageToDecrypt" placeholder="Enter encrypted message" rows="4"></textarea>
+            <textarea id="privateKey" placeholder="Enter your private key" rows="4"></textarea>
+            <label for="decryptPassphrase">Passphrase:</label>
+            <input type="password" id="decryptPassphrase" placeholder="Enter your passphrase">
+            <button onclick="decryptMessage()">Decrypt</button>
+            <p>Decrypted Message:</p>
+            <textarea id="decryptedMessage" rows="4" readonly></textarea>
+        </div>
     </div>
 
     <script>
-        const debugMode = true; // Set this to true to enable debug mode
+        const debugMode = true;
 
         async function generateKeyPair() {
             try {
@@ -55,8 +139,8 @@
                 const passphrase = document.getElementById('passphrase').value;
 
                 const { privateKey, publicKey } = await openpgp.generateKey({
-                    type: 'ecc', // Type of the key: ECC (Elliptic Curve)
-                    curve: 'curve25519', // Curve used
+                    type: 'ecc',
+                    curve: 'curve25519',
                     userIDs: [{ name: name, email: email }],
                     passphrase: passphrase
                 });
